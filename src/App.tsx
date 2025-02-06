@@ -1,18 +1,18 @@
 import { Button, TextInput } from '@mantine/core'
-import { useLocalStorage } from '@mantine/hooks'
 import { IconDog } from '@tabler/icons-react'
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { login } from './api/hooks'
+import Home from './Home'
 
 function App() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [auth, setAuth] = useLocalStorage('auth', null)
+  const [authenticated, setAuthenticated] = useState(false)
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: (res) => setAuth(res),
+    onSuccess: () => setAuthenticated(true),
   })
 
   const handleSubmit = () => {
@@ -20,11 +20,11 @@ function App() {
   }
 
   return (
-    <div className='h-screen w-screen flex items-center justify-center'>
-      {auth ? (
-        'You are logged in'
+    <div className='h-screen w-screen flex'>
+      {authenticated ? (
+        <Home />
       ) : (
-        <div className='flex flex-col gap-8 w-sm'>
+        <div className='flex flex-col gap-8 w-sm m-auto'>
           <IconDog size={80} className='mx-auto' />
           <TextInput
             label='Name'
