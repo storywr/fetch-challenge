@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Badge,
   Button,
   Card,
   Fieldset,
@@ -11,6 +12,7 @@ import {
   PillGroup,
   Select,
   TextInput,
+  Title,
   Tooltip,
 } from '@mantine/core'
 import { IconBone, IconCirclePlus, IconPaw } from '@tabler/icons-react'
@@ -59,11 +61,11 @@ const Home = () => {
   }
 
   return (
-    <div className='flex flex-row w-full gap-8 p-8'>
+    <div className='flex flex-row w-full justify-between p-8 overflow-auto'>
       <Fieldset
         legend={Legend}
         radius='md'
-        className='flex flex-col gap-4 h-fit w-1/3 sticky'
+        className='flex flex-col gap-4 h-fit w-[500px]'
       >
         <MultiSelect
           label='Breeds'
@@ -151,26 +153,29 @@ const Home = () => {
         </Button>
       </Fieldset>
       {dogs?.length > 0 && (
-        <div className='w-2/3'>
-          <div className='grid grid-cols-3 gap-6'>
+        <div>
+          <div className='grid grid-cols-3 gap-6 pb-8'>
             {dogs?.map((dog) => (
-              <div>
+              <div key={dog.id}>
                 <Card
                   className='h-full'
                   shadow='sm'
-                  padding='lg'
+                  padding='md'
                   radius='md'
                   withBorder
                 >
                   <Card.Section>
-                    <Image h={300} src={dog.img} alt='Norway' />
+                    <Image w={300} h={300} src={dog.img} alt='Norway' />
                   </Card.Section>
-                  <Card.Section className='p-4'>
-                    <div>Name: {dog.name}</div>
-                    <div>Zip: {dog.zip_code}</div>
-                    <div>Age: {dog.age}</div>
-                    <div>Breed: {dog.breed}</div>
-                  </Card.Section>
+                  <div className='flex flex-row justify-between items-center pt-3'>
+                    <Title order={3} className='text-cyan-500'>
+                      {dog.name}
+                    </Title>
+                    <Badge>{dog.breed}</Badge>
+                  </div>
+                  <div className='flex flex-row gap-2'>
+                    <div>{dog.zip_code}</div>|<div>{dog.age} Years Old</div>
+                  </div>
                 </Card>
               </div>
             ))}
