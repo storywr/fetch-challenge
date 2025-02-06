@@ -24,7 +24,7 @@ function App() {
       {authenticated ? (
         <Home />
       ) : (
-        <div className='flex flex-col gap-8 w-sm m-auto'>
+        <div className='flex flex-col gap-4 w-sm m-auto'>
           <IconDog size={80} className='mx-auto' />
           <TextInput
             label='Name'

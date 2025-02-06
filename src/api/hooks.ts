@@ -8,25 +8,20 @@ type LoginParams = {
 }
 
 export const login = async (params: LoginParams) => {
-  try {
-    const response = await fetch(`${baseUrl}/auth/login`, {
-      method: 'POST',
-      body: JSON.stringify(params),
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+  const response = await fetch(`${baseUrl}/auth/login`, {
+    method: 'POST',
+    body: JSON.stringify(params),
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
 
-    if (!response.ok) {
-      throw new Error(`Login failed: ${response.status} ${response.statusText}`)
-    }
-
-    return response
-  } catch (error) {
-    console.error('Error logging in:', error)
-    throw error
+  if (!response.ok) {
+    throw new Error(`Login failed: ${response.status} ${response.statusText}`)
   }
+
+  return response
 }
 
 export const useGetBreeds = () => {
@@ -41,6 +36,72 @@ export const useGetBreeds = () => {
       })
       const result = await response.json()
       return result
+    },
+  })
+}
+
+export const useGetDogs = (body: any) => {
+  return useQuery({
+    enabled: body?.length > 0,
+    queryKey: ['dogs', body],
+    queryFn: async () => {
+      const response = await fetch(`${baseUrl}/dogs`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+      const result = await response.json()
+      return result
+    },
+  })
+}
+
+type SearchParams = {
+  breeds: string[]
+  zipCodes: string[]
+  ageMin: string
+  ageMax: string
+  sort: string
+  order: 'asc' | 'desc'
+}
+
+const createQueryString = (queryKey, queryValue) => {
+  if (queryValue.length === 0) return ''
+  let queryString = `&${queryKey}=`
+  queryValue.forEach((item, idx) => {
+    if (idx === 0) {
+      queryString = queryString + item
+    } else {
+      queryString = queryString + `&${queryKey}=${item}`
+    }
+  })
+  return queryString
+}
+
+export const useSearch = (params: SearchParams) => {
+  return useQuery({
+    enabled: false,
+    queryKey: ['search'],
+    queryFn: async () => {
+      const { breeds, zipCodes, ageMin, ageMax, sort, order } = params
+      const breedsString = createQueryString('breeds', breeds)
+      const zipsString = createQueryString('zipCodes', zipCodes)
+      const sortParam = `sort=${sort}:${order}`
+
+      const response = await fetch(
+        `${baseUrl}/dogs/search?${sortParam}&ageMin=${ageMin}&ageMax=${ageMax}${breedsString}${zipsString}`,
+        {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      const result = await response.json()
+      return result?.resultIds ?? []
     },
   })
 }
