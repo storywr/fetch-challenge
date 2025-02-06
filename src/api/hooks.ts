@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 const baseUrl = 'https://frontend-take-home-service.fetch.com'
 
@@ -40,7 +40,16 @@ export const useGetBreeds = () => {
   })
 }
 
-export const useGetDogs = (body: any) => {
+export type Dog = {
+  id: string
+  img: string
+  name: string
+  age: number
+  zip_code: string
+  breed: string
+}
+
+export const useGetDogs = (body: string[]): UseQueryResult<Dog[]> => {
   return useQuery({
     enabled: body?.length > 0,
     queryKey: ['dogs', body],
@@ -68,10 +77,10 @@ type SearchParams = {
   order: 'asc' | 'desc'
 }
 
-const createQueryString = (queryKey: any, queryValue: any) => {
+const createQueryString = (queryKey: string, queryValue: string[]) => {
   if (queryValue.length === 0) return ''
   let queryString = `&${queryKey}=`
-  queryValue.forEach((item: any, idx: any) => {
+  queryValue.forEach((item, idx) => {
     if (idx === 0) {
       queryString = queryString + item
     } else {

@@ -155,10 +155,10 @@ const Home = () => {
           Search
         </Button>
       </Fieldset>
-      {dogs?.length > 0 && (
+      {(dogs?.length ?? 0) > 0 && (
         <div>
           <div className='grid grid-cols-3 gap-6 pb-8'>
-            {dogs?.map((dog: any) => (
+            {dogs?.map((dog) => (
               <div key={dog.id}>
                 <Card
                   className='h-full'
