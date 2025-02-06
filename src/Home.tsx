@@ -25,12 +25,15 @@ const Legend = (
   </div>
 )
 
+type Order = 'asc' | 'desc'
+type Sort = 'breed' | 'age' | 'name'
+
 const Home = () => {
   const { data: breeds } = useGetBreeds()
-  const [selectedBreeds, setSelectedBreeds] = useState([])
+  const [selectedBreeds, setSelectedBreeds] = useState<string[] | []>([])
   const [zip, setZip] = useState('')
-  const [ageMin, setMin] = useState('1')
-  const [ageMax, setMax] = useState('14')
+  const [ageMin, setMin] = useState<string | number>('1')
+  const [ageMax, setMax] = useState<string | number>('14')
   const [zipGroup, setZipGroup] = useState<string[] | []>([])
   const [sort, setSort] = useState('breed')
   const [direction, SetDirection] = useState<'asc' | 'desc'>('asc')
@@ -133,14 +136,14 @@ const Home = () => {
             className='w-full'
             data={['breed', 'name', 'age']}
             value={sort}
-            onChange={(value) => setSort(value as string)}
+            onChange={(value) => setSort(value as Sort)}
             label='Sort By'
           />
           <Select
             className='w-full'
             data={['asc', 'desc']}
             value={direction}
-            onChange={(value) => SetDirection(value)}
+            onChange={(value) => SetDirection(value as Order)}
             label='Sort Order'
           />
         </div>
@@ -155,7 +158,7 @@ const Home = () => {
       {dogs?.length > 0 && (
         <div>
           <div className='grid grid-cols-3 gap-6 pb-8'>
-            {dogs?.map((dog) => (
+            {dogs?.map((dog: any) => (
               <div key={dog.id}>
                 <Card
                   className='h-full'

@@ -62,16 +62,16 @@ export const useGetDogs = (body: any) => {
 type SearchParams = {
   breeds: string[]
   zipCodes: string[]
-  ageMin: string
-  ageMax: string
+  ageMin: string | number
+  ageMax: string | number
   sort: string
   order: 'asc' | 'desc'
 }
 
-const createQueryString = (queryKey, queryValue) => {
+const createQueryString = (queryKey: any, queryValue: any) => {
   if (queryValue.length === 0) return ''
   let queryString = `&${queryKey}=`
-  queryValue.forEach((item, idx) => {
+  queryValue.forEach((item: any, idx: any) => {
     if (idx === 0) {
       queryString = queryString + item
     } else {
