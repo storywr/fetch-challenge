@@ -6,6 +6,7 @@ import {
   Button,
   Fieldset,
   InputBase,
+  Modal,
   MultiSelect,
   NumberInput,
   Pagination,
@@ -23,10 +24,18 @@ import {
   IconCirclePlus,
   IconDogBowl,
   IconHeart,
+  IconHearts,
   IconPaw,
 } from '@tabler/icons-react'
-import { useCallback, useMemo, useState } from 'react'
-import { Dog, useGetBreeds, useGetDogs, useSearch } from './api/hooks'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  Dog,
+  useGetBreeds,
+  useGetDogs,
+  useGetMatch,
+  useGetMatchId,
+  useSearch,
+} from './api/hooks'
 import DogCard from './components/DogCard'
 
 const Legend = (
@@ -49,6 +58,9 @@ const FavoritesLegend = (
 
 type Order = 'asc' | 'desc'
 type Sort = 'breed' | 'age' | 'name'
+type ModalProps = {
+  dog: Dog
+}
 
 const Home = () => {
   const { data: breeds } = useGetBreeds()
@@ -60,6 +72,10 @@ const Home = () => {
   const [sort, setSort] = useState('breed')
   const [direction, SetDirection] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
+  const [isMatching, setIsMatching] = useState(false)
+  const [matchModalProps, setMatchModalProps] = useState<ModalProps | null>(
+    null
+  )
   const {
     data: searchResults,
     isLoading,
@@ -77,6 +93,20 @@ const Home = () => {
     key: 'favorites',
     defaultValue: [],
   })
+  const favoritesIds = useMemo(
+    () => favorites.map((favorite) => favorite.id),
+    [favorites]
+  )
+  const {
+    data: matchId,
+    refetch: refetchMatchId,
+    isSuccess: isSuccessMatchId,
+  } = useGetMatchId(favoritesIds)
+  const {
+    data: match,
+    isSuccess: isSuccessMatch,
+    refetch: refetchMatch,
+  } = useGetMatch([matchId as string])
 
   const handleSelectDog = (dog: Dog) => {
     if (favorites.includes(dog)) {
@@ -112,8 +142,33 @@ const Home = () => {
     [dogs, currentPage]
   )
 
+  useEffect(() => {
+    if (isSuccessMatch) {
+      setMatchModalProps({ dog: match })
+      setIsMatching(false)
+    }
+  }, [isSuccessMatch, match])
+
+  useEffect(() => {
+    if (isSuccessMatchId) {
+      refetchMatch()
+    }
+  }, [isSuccessMatchId])
+
   return (
     <div className='flex flex-row w-full justify-between p-8 overflow-auto'>
+      {matchModalProps && (
+        <Modal
+          size='sm'
+          opened={true}
+          onClose={() => setMatchModalProps(null)}
+          title={<div className='text-2xl font-bold'>Your Match</div>}
+        >
+          <div className='flex h-full w-full items-center justify-center'>
+            <DogCard dog={match as Dog} />
+          </div>
+        </Modal>
+      )}
       <div className='flex flex-col gap-4'>
         <Fieldset
           legend={Legend}
@@ -216,7 +271,7 @@ const Home = () => {
           >
             <Accordion variant='contained'>
               {favorites?.map((favorite) => (
-                <Accordion.Item value={favorite.id}>
+                <Accordion.Item key={favorite.id} value={favorite.id}>
                   <Accordion.Control icon={<Avatar src={favorite.img} />}>
                     <div className='w-full flex flex-row justify-between items-center'>
                       <div>{favorite.name}</div>
@@ -243,6 +298,24 @@ const Home = () => {
                 </Accordion.Item>
               ))}
             </Accordion>
+            <Tooltip
+              title='At least 2 favorites are needed for Matchmaking'
+              label='At least 2 favorites are needed for Matchmaking'
+              hidden={favorites.length > 1}
+            >
+              <Button
+                loading={isMatching}
+                disabled={favorites.length < 2 || isMatching}
+                color='red'
+                rightSection={<IconHearts />}
+                onClick={() => {
+                  setIsMatching(true)
+                  refetchMatchId()
+                }}
+              >
+                Get Match!
+              </Button>
+            </Tooltip>
           </Fieldset>
         )}
       </div>

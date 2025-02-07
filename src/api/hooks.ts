@@ -68,6 +68,44 @@ export const useGetDogs = (body: string[]): UseQueryResult<Dog[]> => {
   })
 }
 
+export const useGetMatch = (body: string[]): UseQueryResult<Dog> => {
+  return useQuery({
+    enabled: false,
+    queryKey: ['match', body],
+    queryFn: async () => {
+      const response = await fetch(`${baseUrl}/dogs`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+      const result = await response.json()
+      return result?.[0] ?? {}
+    },
+  })
+}
+
+export const useGetMatchId = (body: string[]): UseQueryResult<string> => {
+  return useQuery({
+    enabled: false,
+    queryKey: ['matchId', body],
+    queryFn: async () => {
+      const response = await fetch(`${baseUrl}/dogs/match`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+      const result = await response.json()
+      return result?.match ?? ''
+    },
+  })
+}
+
 type SearchParams = {
   breeds: string[]
   zipCodes: string[]

@@ -12,28 +12,30 @@ import { Dog } from '../api/hooks'
 
 type Props = {
   dog: Dog
-  handleSelect: (dog: Dog) => void
-  isSelected: boolean
+  handleSelect?: (dog: Dog) => void
+  isSelected?: boolean
 }
 
-const DogCard = ({ dog, handleSelect, isSelected }: Props) => {
+const DogCard = ({ dog, handleSelect, isSelected = false }: Props) => {
   const tooltipTitle = isSelected ? 'Remove Favorite' : 'Favorite'
   return (
     <div>
       <Card className='w-[300px]' shadow='sm' radius='md' withBorder>
         <CardSection>
           <BackgroundImage w={300} h={300} src={dog.img}>
-            <Tooltip title={tooltipTitle} label={tooltipTitle}>
-              <ActionIcon
-                color={isSelected ? 'red' : 'blue'}
-                className='absolute top-[10px] left-[255px] z-50'
-                onClick={() => handleSelect(dog)}
-                radius='md'
-                size='lg'
-              >
-                <IconHeart size={20} />
-              </ActionIcon>
-            </Tooltip>
+            {handleSelect && (
+              <Tooltip title={tooltipTitle} label={tooltipTitle}>
+                <ActionIcon
+                  color={isSelected ? 'red' : 'blue'}
+                  className='absolute top-[10px] left-[255px] z-50'
+                  onClick={handleSelect ? () => handleSelect(dog) : () => null}
+                  radius='md'
+                  size='lg'
+                >
+                  <IconHeart size={20} />
+                </ActionIcon>
+              </Tooltip>
+            )}
           </BackgroundImage>
         </CardSection>
         <div className='flex flex-row justify-between items-center pt-3'>
