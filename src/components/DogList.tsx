@@ -1,4 +1,4 @@
-import { Fieldset, Pagination } from '@mantine/core'
+import { Fieldset, Pagination, Skeleton } from '@mantine/core'
 import { IconDogBowl } from '@tabler/icons-react'
 import { Dog } from '../api/hooks'
 import DogCard from '../components/DogCard'
@@ -16,6 +16,7 @@ type Props = {
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>
   pages: number
   handleSelectDog: (dog: Dog) => void
+  isLoading: boolean
 }
 
 const DogList = ({
@@ -25,6 +26,7 @@ const DogList = ({
   setCurrentPage,
   pages,
   handleSelectDog,
+  isLoading,
 }: Props) => {
   return (
     <Fieldset
@@ -33,14 +35,20 @@ const DogList = ({
       className='flex flex-col gap-3 h-full'
     >
       <div className='grid grid-cols-3 gap-4 h-full'>
-        {paginatedDogs?.map((dog) => (
-          <DogCard
-            isSelected={isSelected(dog)}
-            key={dog.id}
-            dog={dog}
-            handleSelect={handleSelectDog}
-          />
-        ))}
+        {isLoading
+          ? new Array(6)
+              .fill(null)
+              .map((_) => (
+                <Skeleton className='rounded-md' height={365} width={280} />
+              ))
+          : paginatedDogs?.map((dog) => (
+              <DogCard
+                isSelected={isSelected(dog)}
+                key={dog.id}
+                dog={dog}
+                handleSelect={handleSelectDog}
+              />
+            ))}
       </div>
       <Pagination
         className='w-full items-center justify-center flex'

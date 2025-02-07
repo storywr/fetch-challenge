@@ -40,7 +40,7 @@ const Favorites = ({
       legend={FavoritesLegend}
       className='flex flex-col gap-4'
     >
-      <Accordion variant='contained'>
+      <Accordion className='max-h-[345px] overflow-auto' variant='contained'>
         {favorites?.map((favorite) => (
           <Accordion.Item key={favorite.id} value={favorite.id}>
             <Accordion.Control icon={<Avatar src={favorite.img} />}>

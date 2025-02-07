@@ -140,7 +140,7 @@ const Home = () => {
           />
         )}
       </div>
-      {(dogs?.length ?? 0) > 0 && (
+      {((dogs?.length ?? 0) > 0 || isSearching) && (
         <DogList
           paginatedDogs={paginatedDogs}
           isSelected={isSelected}
@@ -148,6 +148,7 @@ const Home = () => {
           setCurrentPage={setCurrentPage}
           pages={pages}
           handleSelectDog={handleSelectDog}
+          isLoading={isSearching}
         />
       )}
     </div>

@@ -38,7 +38,12 @@ function App() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Button onClick={handleSubmit} variant='filled' color='cyan'>
+          <Button
+            loading={loginMutation.isPending}
+            onClick={handleSubmit}
+            variant='filled'
+            color='cyan'
+          >
             Login
           </Button>
         </div>
