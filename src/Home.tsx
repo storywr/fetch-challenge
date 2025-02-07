@@ -77,7 +77,7 @@ const Home = () => {
   )
   const {
     data: searchResults,
-    isLoading,
+    isLoading: isLoadingSearch,
     refetch,
   } = useSearch({
     breeds: selectedBreeds,
@@ -87,7 +87,7 @@ const Home = () => {
     sort,
     order: direction,
   })
-  const { data: dogs } = useGetDogs(searchResults)
+  const { data: dogs, isLoading: isLoadingDogs } = useGetDogs(searchResults)
   const [favorites, setFavorites] = useLocalStorage<Dog[]>({
     key: 'favorites',
     defaultValue: [],
@@ -142,6 +142,7 @@ const Home = () => {
     })
   }
   const isMatching = matchIdMutation.isPending || matchMutation.isPending
+  const isSearching = isLoadingSearch || isLoadingDogs
 
   return (
     <div className='flex flex-row w-full justify-between p-8 overflow-auto'>
@@ -241,7 +242,8 @@ const Home = () => {
             />
           </div>
           <Button
-            disabled={isLoading}
+            loading={isSearching}
+            disabled={isSearching}
             onClick={() => {
               setCurrentPage(1)
               refetch()
