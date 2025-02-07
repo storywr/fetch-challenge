@@ -32,7 +32,7 @@ const DogList = ({
       radius='md'
       className='flex flex-col gap-3 h-full'
     >
-      <div className='grid grid-cols-3 gap-2 h-full'>
+      <div className='grid grid-cols-3 gap-4 h-full'>
         {paginatedDogs?.map((dog) => (
           <DogCard
             isSelected={isSelected(dog)}

@@ -20,14 +20,14 @@ const DogCard = ({ dog, handleSelect, isSelected = false }: Props) => {
   const tooltipTitle = isSelected ? 'Remove Favorite' : 'Favorite'
   return (
     <div>
-      <Card className='w-[300px]' shadow='sm' radius='md' withBorder>
+      <Card className='w-[280px]' shadow='sm' radius='md' withBorder>
         <CardSection>
-          <BackgroundImage w={300} h={300} src={dog.img}>
+          <BackgroundImage w={280} h={280} src={dog.img}>
             {handleSelect && (
               <Tooltip title={tooltipTitle} label={tooltipTitle}>
                 <ActionIcon
                   color={isSelected ? 'red' : 'blue'}
-                  className='absolute top-[10px] left-[255px] z-50'
+                  className='absolute top-[10px] left-[235px] z-50'
                   onClick={handleSelect ? () => handleSelect(dog) : () => null}
                   radius='md'
                   size='lg'
