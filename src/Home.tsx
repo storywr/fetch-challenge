@@ -27,7 +27,7 @@ import {
   IconHearts,
   IconPaw,
 } from '@tabler/icons-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import {
   Dog,
   useGetBreeds,
@@ -72,7 +72,6 @@ const Home = () => {
   const [sort, setSort] = useState('breed')
   const [direction, SetDirection] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
-  const [isMatching, setIsMatching] = useState(false)
   const [matchModalProps, setMatchModalProps] = useState<ModalProps | null>(
     null
   )
@@ -97,16 +96,8 @@ const Home = () => {
     () => favorites.map((favorite) => favorite.id),
     [favorites]
   )
-  const {
-    data: matchId,
-    refetch: refetchMatchId,
-    isSuccess: isSuccessMatchId,
-  } = useGetMatchId(favoritesIds)
-  const {
-    data: match,
-    isSuccess: isSuccessMatch,
-    refetch: refetchMatch,
-  } = useGetMatch([matchId as string])
+  const matchIdMutation = useGetMatchId()
+  const matchMutation = useGetMatch()
 
   const handleSelectDog = (dog: Dog) => {
     if (favorites.includes(dog)) {
@@ -142,18 +133,15 @@ const Home = () => {
     [dogs, currentPage]
   )
 
-  useEffect(() => {
-    if (isSuccessMatch) {
-      setMatchModalProps({ dog: match })
-      setIsMatching(false)
-    }
-  }, [isSuccessMatch, match])
-
-  useEffect(() => {
-    if (isSuccessMatchId) {
-      refetchMatch()
-    }
-  }, [isSuccessMatchId])
+  const handleMatch = () => {
+    matchIdMutation.mutate(favoritesIds, {
+      onSuccess: (matchId) =>
+        matchMutation.mutate([matchId], {
+          onSuccess: (match) => setMatchModalProps({ dog: match }),
+        }),
+    })
+  }
+  const isMatching = matchIdMutation.isPending || matchMutation.isPending
 
   return (
     <div className='flex flex-row w-full justify-between p-8 overflow-auto'>
@@ -165,7 +153,7 @@ const Home = () => {
           title={<div className='text-2xl font-bold'>Your Match</div>}
         >
           <div className='flex h-full w-full items-center justify-center'>
-            <DogCard dog={match as Dog} />
+            <DogCard dog={matchModalProps.dog} />
           </div>
         </Modal>
       )}
@@ -308,10 +296,7 @@ const Home = () => {
                 disabled={favorites.length < 2 || isMatching}
                 color='red'
                 rightSection={<IconHearts />}
-                onClick={() => {
-                  setIsMatching(true)
-                  refetchMatchId()
-                }}
+                onClick={handleMatch}
               >
                 Get Match!
               </Button>

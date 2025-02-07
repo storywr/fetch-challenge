@@ -1,4 +1,9 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query'
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+  UseQueryResult,
+} from '@tanstack/react-query'
 
 const baseUrl = 'https://frontend-take-home-service.fetch.com'
 
@@ -68,11 +73,9 @@ export const useGetDogs = (body: string[]): UseQueryResult<Dog[]> => {
   })
 }
 
-export const useGetMatch = (body: string[]): UseQueryResult<Dog> => {
-  return useQuery({
-    enabled: false,
-    queryKey: ['match', body],
-    queryFn: async () => {
+export const useGetMatch = (): UseMutationResult<Dog, Error, string[]> => {
+  return useMutation({
+    mutationFn: async (body: string[]) => {
       const response = await fetch(`${baseUrl}/dogs`, {
         method: 'POST',
         credentials: 'include',
@@ -87,11 +90,9 @@ export const useGetMatch = (body: string[]): UseQueryResult<Dog> => {
   })
 }
 
-export const useGetMatchId = (body: string[]): UseQueryResult<string> => {
-  return useQuery({
-    enabled: false,
-    queryKey: ['matchId', body],
-    queryFn: async () => {
+export const useGetMatchId = (): UseMutationResult<string, Error, string[]> => {
+  return useMutation({
+    mutationFn: async (body: string[]) => {
       const response = await fetch(`${baseUrl}/dogs/match`, {
         method: 'POST',
         credentials: 'include',
