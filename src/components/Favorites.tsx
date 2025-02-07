@@ -8,12 +8,16 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core'
-import { IconCircleMinus, IconHearts } from '@tabler/icons-react'
+import {
+  IconCircleMinus,
+  IconHearts,
+  IconTableHeart,
+} from '@tabler/icons-react'
 import { Dog } from '../api/hooks'
 
 const FavoritesLegend = (
   <div className='flex flex-row gap-2 items-center text-lg'>
-    Favorites <IconHearts size={20} />
+    Favorites <IconTableHeart size={20} />
   </div>
 )
 
